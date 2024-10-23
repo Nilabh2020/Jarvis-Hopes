@@ -1,59 +1,45 @@
 import json
-import os
 from wikipedia_search import get_wikipedia_answer
 from weather_info import get_weather
+from jarvis_learn import jarvis_learn, load_predefined_data
 
-# File path for storing questions and answers
-QA_FILE = "qa_data.json"
+# Load predefined data globally
+predefined_data = load_predefined_data()
 
-# Function to load questions and answers from a JSON file
-def load_qa_data():
-    if os.path.exists(QA_FILE):
-        with open(QA_FILE, "r") as file:
-            return json.load(file)
-    return {}
 
-# Function to save questions and answers to a JSON file
-def save_qa_data(data):
-    with open(QA_FILE, "w") as file:
-        json.dump(data, file, indent=4)
-
-# Main function to run Jarvis
 def jarvis():
-    qa_data = load_qa_data()  # Load existing QA data
+    global predefined_data  # Declare it as global so it can be modified inside the function
 
     while True:
-        user_input = input("You: ").lower()
+        user_input = input("You: ").lower().strip()
 
-        # Check if the user input matches any existing question
-        if user_input in qa_data:
-            print(f"Jarvis: {qa_data[user_input]}")
-            continue
+        # Handle learning process
+        if "learn" in user_input:
+            predefined_data = jarvis_learn(predefined_data)
 
-        # Handle Wikipedia queries
-        if any(user_input.startswith(starter) for starter in ["what", "who", "where", "when", "why"]):
-            query = user_input
-            result = get_wikipedia_answer(query)
+        # Check if question is in predefined data
+        elif user_input in predefined_data:
+            print(f"Jarvis: {predefined_data[user_input]}")
+
+        # Wikipedia search
+        elif "what is" in user_input or "who is" in user_input or "when" in user_input or "where" in user_input:
+            result = get_wikipedia_answer(user_input)
             print(f"Jarvis: {result}")
-
-            # Save the question and answer to the JSON file
-            qa_data[user_input] = result
-            save_qa_data(qa_data)
-
-
 
         # Handle weather queries
         elif "weather" in user_input:
             city = user_input.replace("weather", "").strip()
             result = get_weather(city)
-            print(f"Jarvis: The temperature in {city} is {result}.")
+            print(f"Jarvis: {result}")
 
+        # Handle exit
         elif "exit" in user_input:
             print("Jarvis: Goodbye!")
             break
 
         else:
             print("Jarvis: I'm not sure how to handle that request.")
+
 
 if __name__ == "__main__":
     jarvis()
