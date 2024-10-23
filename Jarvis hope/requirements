@@ -1,8 +1,9 @@
-pip install requests beautifulsoup4 wikipedia-api yfinance lxml
+pip install requests beautifulsoup4 wikipedia-api yfinance lxml nltk
 
 
-requests - For making HTTP requests to Google and other websites.
-beautifulsoup4 - For parsing HTML and scraping content from web pages.
-wikipedia-api - For fetching summaries from Wikipedia.
-yfinance - For fetching stock data.
-lxml - An XML parser used by BeautifulSoup for faster parsing.
+requests
+beautifulsoup4
+wikipedia
+yfinance
+lxml
+nltk
