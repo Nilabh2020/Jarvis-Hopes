@@ -1,7 +1,5 @@
-# weather_info.py
 import requests
 from bs4 import BeautifulSoup
-
 
 def get_weather(city):
     city = city.replace(' ', '+')

@@ -4,13 +4,6 @@ import os
 # File path for the JSON data
 DATA_FILE = 'predefined_data.json'
 
-# Load predefined data from JSON file
-def load_predefined_data():
-    if os.path.exists(DATA_FILE):
-        with open(DATA_FILE, 'r') as file:
-            return json.load(file)
-    return {}
-
 # Save predefined data back to JSON file
 def save_predefined_data(data):
     with open(DATA_FILE, 'w') as file:
