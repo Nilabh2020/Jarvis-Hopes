@@ -3,7 +3,8 @@ import os
 from dotenv import load_dotenv
 from weather_info import get_weather
 from jarvis_learn import jarvis_learn
-from automation import automate  # Import the automate function
+from automation import automate
+from YTvid import play_youtube_video  # Import the YouTube function
 
 # Load environment variables from .env file
 load_dotenv()
@@ -42,7 +43,11 @@ def jarvis():
             print(f"Jarvis: {result}")
 
         elif user_input.startswith("open "):
-            automate(user_input)  # Call the automate function
+            automate(user_input)
+
+        elif user_input.startswith("play "):
+            song_name = user_input.replace("play", "").strip()
+            play_youtube_video(song_name)
 
         elif user_input == "exit":
             print("Jarvis: Goodbye!")
