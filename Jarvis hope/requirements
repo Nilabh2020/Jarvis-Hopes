@@ -1,6 +1,7 @@
-pip install requests beautifulsoup4 wikipedia-api yfinance lxml nltk pywhatkit schedule plyer
+pip install requests beautifulsoup4 wikipedia-api yfinance lxml nltk pywhatkit schedule plyer dotenv
 
 
+dotenv
 requests
 beautifulsoup4
 wikipedia
