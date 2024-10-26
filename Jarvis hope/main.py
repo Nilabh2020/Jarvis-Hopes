@@ -1,16 +1,21 @@
 import json
 import os
-import re  # Import for text normalization
 from dotenv import load_dotenv
 from weather_info import get_weather
 from jarvis_learn import jarvis_learn
-from automation import automate  # Import the automate function
-from scheduler import schedule_task  # Import the schedule_task function
-from YTvid import play_youtube_video  # Import the play_youtube_video function
-import wikipedia  # Ensure you have this import for Wikipedia functionality
+from automation import automate
+from scheduler import schedule_task
+from YTvid import play_youtube_video
+import wikipedia
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
-# Load environment variables from .env file
+# Load environment variables
 load_dotenv()
+
+EMAIL_ADDRESS = os.getenv("EMAIL_ADDRESS")
+EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
 
 # File path for the predefined data
 DATA_FILE = 'predefined_data.json'
@@ -19,71 +24,86 @@ DATA_FILE = 'predefined_data.json'
 def load_predefined_data():
     if os.path.exists(DATA_FILE):
         with open(DATA_FILE, 'r') as file:
-            data = json.load(file)
-            print("Debug: Loaded predefined data from file.")  # Debug message
-            return data
-    print("Debug: No predefined data file found. Starting fresh.")  # Debug message
+            return json.load(file)
     return {}
 
-# Save updated predefined data to JSON file
-def save_predefined_data(data):
+# Save predefined data to JSON file
+def save_predefined_data(predefined_data):
     with open(DATA_FILE, 'w') as file:
-        json.dump(data, file, indent=4)
-    print("Debug: Saved predefined data to file.")  # Debug message
+        json.dump(predefined_data, file, indent=4)
 
-# Normalize text by removing punctuation and converting to lowercase
-def normalize_text(text):
-    return re.sub(r'[^\w\s]', '', text.lower())
+# Send an email
+def send_email(to_email, subject, message):
+    try:
+        with smtplib.SMTP("smtp.gmail.com", 587) as server:
+            server.ehlo()
+            server.starttls()
+            server.ehlo()
+            server.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
+
+            email_message = MIMEMultipart()
+            email_message["From"] = EMAIL_ADDRESS
+            email_message["To"] = to_email
+            email_message["Subject"] = subject
+            email_message.attach(MIMEText(message, "plain"))
+
+            server.sendmail(EMAIL_ADDRESS, to_email, email_message.as_string())
+            print("Jarvis: Email sent successfully!")
+
+    except Exception as e:
+        print(f"Jarvis: Failed to send email - {e}")
 
 def jarvis():
     predefined_data = load_predefined_data()
 
     while True:
-        user_input = input("You: ").strip()
-        normalized_input = normalize_text(user_input)
+        user_input = input("You: ").lower().strip()
 
-        if normalized_input == "learn":
+        if user_input == "learn":
             predefined_data = jarvis_learn(predefined_data)
 
-        elif normalized_input.startswith("what") or normalized_input.startswith("when") or normalized_input.startswith("who") or normalized_input.startswith("how"):
+        elif user_input.startswith("what") or user_input.startswith("when") or user_input.startswith("who"):
             question = user_input
-            normalized_question = normalize_text(question)
-            answer = predefined_data.get(normalized_question)
+            answer = predefined_data.get(question)
 
             if answer:
-                print(f"Jarvis: {answer}")  # Confirm answer is from file
+                print(f"Jarvis: {answer}")
             else:
-                # Search Wikipedia if not found in predefined data
                 try:
                     summary = wikipedia.summary(question, sentences=2)
-                    print(f"Jarvis: {summary} (from Wikipedia)")  # Confirm answer is from Wikipedia
-                    # Store the question and answer in predefined data
-                    predefined_data[normalized_question] = summary
+                    print(f"Jarvis: {summary}")
+                    predefined_data[question] = summary
                     save_predefined_data(predefined_data)
                 except Exception as e:
                     print("Jarvis: I'm not sure how to handle that request.")
 
-        elif "weather" in normalized_input:
+        elif "weather" in user_input:
             city = user_input.replace("weather", "").strip()
             result = get_weather(city)
             print(f"Jarvis: {result}")
 
-        elif normalized_input.startswith("play "):
+        elif user_input.startswith("play "):
             song_name = user_input[5:]  # Get the song name
-            play_youtube_video(song_name)  # Play the song
+            play_youtube_video(song_name)
 
-        elif normalized_input.startswith("schedule "):
-            parts = user_input[9:].rsplit(' ', 1)  # Split the command and the time
+        elif user_input.startswith("schedule "):
+            parts = user_input[9:].rsplit(' ', 1)
             if len(parts) == 2:
                 task_name, time_str = parts
-                schedule_task(task_name, time_str)  # Schedule the task
+                schedule_task(task_name, time_str)
             else:
                 print("Jarvis: Please provide a task and a time in HH:MM format.")
 
-        elif normalized_input.startswith("open "):
-            automate(user_input)  # Call the automate function to open applications
+        elif user_input.startswith("open "):
+            automate(user_input)
 
-        elif normalized_input == "exit":
+        elif user_input == "email":
+            to_email = input("Email ID: ").strip()
+            subject = input("Subject: ").strip()
+            message = input("Message: ").strip()
+            send_email(to_email, subject, message)
+
+        elif user_input == "exit":
             print("Jarvis: Goodbye!")
             break
 
