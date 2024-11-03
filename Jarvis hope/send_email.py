@@ -1,26 +1,30 @@
 import smtplib
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
-import os
 
-def send_email(to_address, subject, message):
-    # Load email credentials from environment variables
-    email_address = os.getenv('EMAIL_USER')
-    email_password = os.getenv('EMAIL_PASS')
-
-    # Create the email message
-    msg = MIMEMultipart()
-    msg['From'] = email_address
-    msg['To'] = to_address
-    msg['Subject'] = subject
-    msg.attach(MIMEText(message, 'plain'))
+def send_email():
+    sender_email = "nilabh2020@gmail.com"
+    app_password = "bsnu wbxw cvls icpl"  # Use the actual app password here
 
     try:
-        # Connect to the server and send the email
-        with smtplib.SMTP('smtp.gmail.com', 587) as server:
-            server.starttls()
-            server.login(email_address, email_password)
-            server.sendmail(email_address, to_address, msg.as_string())
-        print("Jarvis: Email sent successfully.")
+        # Create SMTP session
+        s = smtplib.SMTP('smtp.gmail.com', 587)
+        s.starttls()
+        s.login(sender_email, app_password)
+
+        # Collect message details
+        receiver_email_id = input("Who do you want to send to? : ")
+        subject = input("Subject: ")
+        message = input("Message: ")
+
+        # Format the email
+        full_message = f"Subject: {subject}\n\n{message}"
+
+        # Send the email
+        s.sendmail(sender_email, receiver_email_id, full_message)
+        print("Jarvis: Email sent successfully!")
+
     except Exception as e:
         print(f"Jarvis: Failed to send email - {e}")
+
+    finally:
+        # Terminating the session
+        s.quit()

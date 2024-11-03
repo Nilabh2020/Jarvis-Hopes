@@ -1,12 +1,10 @@
-from plyer import notification
-import time
-
-# Send a test notification
-notification.notify(
-    title="Test Notification",
-    message="This is a test notification!",
-    timeout=10  # Notification duration in seconds
-)
-
-# Wait a few seconds to allow the notification to appear
-time.sleep(10)
+import smtplib
+s = smtplib.SMTP('smtp.gmail.com', 587)
+s.starttls()
+s.login("nilabh2020@gmail.com", "APP_pass")
+# message to be sent
+message = input("Message: ")
+receiver_email_id = input("Who do you want to send to? : ")
+s.sendmail("nilabh2020@gmail.com", receiver_email_id, message)
+# terminating the session
+s.quit()

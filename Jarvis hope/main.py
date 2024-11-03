@@ -1,21 +1,13 @@
 import json
 import os
-from dotenv import load_dotenv
 from weather_info import get_weather
 from jarvis_learn import jarvis_learn
 from automation import automate
 from scheduler import schedule_task
 from YTvid import play_youtube_video
 import wikipedia
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
+from send_email import send_email
 
-# Load environment variables
-load_dotenv()
-
-EMAIL_ADDRESS = os.getenv("EMAIL_ADDRESS")
-EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
 
 # File path for the predefined data
 DATA_FILE = 'predefined_data.json'
@@ -33,31 +25,13 @@ def save_predefined_data(predefined_data):
         json.dump(predefined_data, file, indent=4)
 
 # Send an email
-def send_email(to_email, subject, message):
-    try:
-        with smtplib.SMTP("smtp.gmail.com", 587) as server:
-            server.ehlo()
-            server.starttls()
-            server.ehlo()
-            server.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
-
-            email_message = MIMEMultipart()
-            email_message["From"] = EMAIL_ADDRESS
-            email_message["To"] = to_email
-            email_message["Subject"] = subject
-            email_message.attach(MIMEText(message, "plain"))
-
-            server.sendmail(EMAIL_ADDRESS, to_email, email_message.as_string())
-            print("Jarvis: Email sent successfully!")
-
-    except Exception as e:
-        print(f"Jarvis: Failed to send email - {e}")
 
 def jarvis():
     predefined_data = load_predefined_data()
 
     while True:
         user_input = input("You: ").lower().strip()
+        print(f"Debug: User input received: '{user_input}'")  # Debug statement
 
         if user_input == "learn":
             predefined_data = jarvis_learn(predefined_data)
@@ -97,11 +71,9 @@ def jarvis():
         elif user_input.startswith("open "):
             automate(user_input)
 
-        elif user_input == "email":
-            to_email = input("Email ID: ").strip()
-            subject = input("Subject: ").strip()
-            message = input("Message: ").strip()
-            send_email(to_email, subject, message)
+        elif user_input == "email":  # Ensure this is checking for 'email'
+            print("Debug: Calling send_email() function...")  # Debug statement
+            send_email()  # Call the email function when 'email' is typed
 
         elif user_input == "exit":
             print("Jarvis: Goodbye!")
