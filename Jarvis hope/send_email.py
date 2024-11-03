@@ -1,8 +1,8 @@
 import smtplib
 
 def send_email():
-    sender_email = "nilabh2020@gmail.com"
-    app_password = "bsnu wbxw cvls icpl"  # Use the actual app password here
+    sender_email = "Email id"
+    app_password = "App password"  # Use the actual app password here
 
     try:
         # Create SMTP session
