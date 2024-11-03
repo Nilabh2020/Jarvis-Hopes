@@ -1,13 +1,9 @@
-pip install requests beautifulsoup4 wikipedia-api yfinance lxml nltk pywhatkit schedule plyer dotenv
+pip install requests beautifulsoup4 wikipedia schedule smtplib plyer
 
 
-dotenv
+plyer
 requests
 beautifulsoup4
 wikipedia
-yfinance
-lxml
-nltk
-pywhatkit
 schedule
-plyer
+smtplib
