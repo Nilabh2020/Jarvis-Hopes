@@ -12,7 +12,7 @@ import threading  # For parallel execution of speak_text
 from website_search import open_website_with_search  # Import the search function
 from google_calender import list_events, add_event  # Google Calendar Integration
 from voice_output import speak_text  # Import the speak_text function
-import time
+
 import asyncio  # Import asyncio to run async functions
 
 # Load environment variables from .env file
@@ -35,7 +35,7 @@ async def jarvis():
     while True:
         user_input = input("You: ").lower().strip()
 
-        if user_input == "jarvis learn":
+        if user_input == "learn":
             predefined_data = jarvis_learn(predefined_data)
 
         elif user_input.startswith("what") or user_input.startswith("when") or user_input.startswith("who"):
@@ -100,7 +100,6 @@ async def jarvis():
             print("Jarvis: Goodbye!")
             # Speak in a separate thread
             threading.Thread(target=lambda: asyncio.run(speak_text("Goodbye!"))).start()
-            time.sleep(2)
             break
 
         else:
