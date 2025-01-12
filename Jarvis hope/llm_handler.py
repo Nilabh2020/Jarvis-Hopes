@@ -4,7 +4,7 @@ import requests
 url = "https://api.x.ai/v1/chat/completions"
 headers = {
     "Content-Type": "application/json",
-    "Authorization": "Bearer xai-AO88EIqbRpMQaUlBy7BJi1UrhHW74230NV56eI5NwPAldvKtTTceHksdN4NurKrtEJBM0B3vV2oTBWdN"
+    "Authorization": "your api"
 }
 
 def get_assistant_reply(user_query):
