@@ -1,7 +1,7 @@
 import json
 import os
 from dotenv import load_dotenv
-from weather_info import get_weather
+from weather_info import get_weather  # Now using the updated weather function
 from jarvis_learn import jarvis_learn
 from automation import automate
 from YTvid import play_youtube_video
@@ -58,8 +58,8 @@ async def jarvis():
                     threading.Thread(target=lambda: asyncio.run(speak_text("Sorry, I couldn't process your request."))).start()
 
         elif "weather" in user_input:
-            city = user_input.replace("can you tell me what is the weather in", "").strip()
-            result = get_weather(city)
+            city = user_input.replace("can you tell the weather of", "").strip()
+            result = get_weather(city)  # Use the scraping function to get weather data
             print(f"Jarvis: {result}")
             # Speak in a separate thread
             threading.Thread(target=lambda: asyncio.run(speak_text(result))).start()
