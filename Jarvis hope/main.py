@@ -5,7 +5,7 @@ from weather_info import get_weather  # Now using the updated weather function
 from jarvis_learn import jarvis_learn
 from automation import automate
 from YTvid import play_youtube_video
-from llm_handler import get_assistant_reply
+from llm_handler import chat_with_ai  # Updated LLM handler
 from play_song import play_latest_song  # Play latest song functionality
 from cpu_status import get_cpu_usage  # CPU usage status
 import threading  # For parallel execution of speak_text
@@ -33,7 +33,12 @@ async def jarvis():
     predefined_data = load_predefined_data()
 
     while True:
-        user_input = input("You: ").lower().strip()
+        try:
+            # Try reading user input
+            user_input = input("You: ").lower().strip()
+        except UnicodeDecodeError:  # Handle the UnicodeDecodeError gracefully
+            print("Error: Invalid input encoding detected. Please try again.")
+            continue  # Skip the rest of the loop and ask for input again
 
         if user_input == "learn":
             predefined_data = jarvis_learn(predefined_data)
@@ -48,10 +53,8 @@ async def jarvis():
                 threading.Thread(target=lambda: asyncio.run(speak_text(answer))).start()
             else:
                 try:
-                    llm_response = get_assistant_reply(user_input)
-                    print(f"Jarvis: {llm_response}")
-                    # Speak in a separate thread
-                    threading.Thread(target=lambda: asyncio.run(speak_text(llm_response))).start()
+                    print("Jarvis: Switching to AI for an answer.")
+                    chat_with_ai(number_of_questions=1)
                 except Exception as e:
                     print(f"Jarvis: Sorry, I couldn't process your request. Error: {e}")
                     # Speak in a separate thread
@@ -105,10 +108,8 @@ async def jarvis():
         else:
             # Default to LLM for unknown requests
             try:
-                llm_response = get_assistant_reply(user_input)
-                print(f"Jarvis: {llm_response}")
-                # Speak in a separate thread
-                threading.Thread(target=lambda: asyncio.run(speak_text(llm_response))).start()
+                print("Jarvis: Switching to AI for an answer.")
+                chat_with_ai(number_of_questions=1)
             except Exception as e:
                 print(f"Jarvis: Sorry, I couldn't process your request. Error: {e}")
                 # Speak in a separate thread
